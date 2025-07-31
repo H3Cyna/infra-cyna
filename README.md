@@ -10,10 +10,11 @@ Ce repository contient tous les scripts et configurations liés à l'automatisat
 
 ## Arborescence du projet
 
-- 	erraform/ : scripts d’infrastructure
-- nsible/ : automatisation système et services
-- 
-etwork-config/ : fichiers de configuration réseau
-- cicd/ : pipelines CI/CD
-- ackup/ : scripts de sauvegarde/restauration
-- docs/ : documentation technique
+infra-cyna/
+├── terraform/ # Scripts d'infrastructure (Azure, VMs, réseau)
+├── ansible/ # Automatisation système et déploiement applicatif
+├── network-config/ # Configurations des équipements réseau (pare-feux, switches)
+├── cicd/ # Pipelines CI/CD (GitLab, Jenkins)
+├── backup/ # Scripts de sauvegarde/restauration
+├── docs/ # Documentation technique
+└── envs/ # Fichiers .tfvars pour gérer plusieurs environnements

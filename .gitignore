@@ -3,6 +3,7 @@
 *.tfstate.*
 .terraform/
 terraform.tfvars
+logs/
 
 # Ansible
 *.retry

@@ -1,0 +1,14 @@
+﻿# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+
+# Ansible
+*.retry
+*.log
+
+# Archives, logs, swap files, etc.
+*.zip
+*.bak
+*.swp

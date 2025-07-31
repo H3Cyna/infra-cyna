@@ -1,0 +1,42 @@
+
+---
+```yaml
+# ansible/site.yml
+- name: Déploiement complet des serveurs Cyna
+  hosts: all
+  become: true
+
+  roles:
+    - system
+
+- name: Configuration du serveur DNS Windows
+  hosts: windows_dns
+  gather_facts: no
+  roles:
+    - dns
+
+- name: Configuration DHCP sur PfSense
+  hosts: localhost
+  connection: local
+  roles:
+    - dhcp
+
+- name: Configuration des règles pare-feu
+  hosts: all
+  become: true
+  roles:
+    - firewall
+
+- name: Installation de la stack de monitoring
+  hosts: vm_monitoring
+  become: true
+  roles:
+    - prometheus
+    - grafana
+    - alertmanager
+
+- name: Installer node exporter
+  hosts: all
+  become: true
+  roles:
+    - node_exporter

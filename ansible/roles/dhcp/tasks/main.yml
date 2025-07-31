@@ -1,0 +1,23 @@
+---
+- name: Ajouter une réservation DHCP dans PfSense
+  uri:
+    url: "https://192.168.1.1/api/v1/services/dhcpd/lan/static-mapping"
+    method: POST
+    user: ansible
+    password: "{{ pf_api_password }}"
+    force_basic_auth: yes
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      ipaddr: "192.168.30.10"
+      mac: "00:11:22:33:44:55"
+      hostname: "vm-monitoring"
+      descr: "Machine Prometheus"
+      enabled: true
+  register: result
+
+- name: Vérifier la réponse de l'API
+  debug:
+    var: result

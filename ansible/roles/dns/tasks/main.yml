@@ -1,0 +1,21 @@
+---
+- name: S'assurer que le rôle DNS est installé
+  win_feature:
+    name: DNS
+    state: present
+    include_management_tools: yes
+
+- name: Créer une zone de recherche directe
+  win_dns_zone:
+    name: cyna.local
+    zone_type: Primary
+    dynamic_update: None
+    state: present
+
+- name: Ajouter un enregistrement A
+  win_dns_record:
+    zone: cyna.local
+    name: gitlab
+    type: A
+    value: 192.168.30.12
+    state: present

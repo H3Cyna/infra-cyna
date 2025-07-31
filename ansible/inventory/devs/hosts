@@ -4,5 +4,17 @@
 [vm_logs]
 192.168.30.13 ansible_user=azureuser ansible_ssh_private_key_file=~/.ssh/id_rsa
 
+
+[windows_dns]
+192.168.1.254
+
+[windows_dns:vars]
+ansible_user=Administrateur
+ansible_password=MotDePasseDuServeur
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+
+
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

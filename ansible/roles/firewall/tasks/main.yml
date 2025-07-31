@@ -1,0 +1,17 @@
+---
+- name: Activer UFW
+  ansible.builtin.ufw:
+    state: enabled
+    policy: deny
+
+- name: Autoriser les ports communs
+  ansible.builtin.ufw:
+    rule: allow
+    port: "{{ item }}"
+  loop: "{{ firewall_rules.common }}"
+
+- name: Autoriser les ports selon le rôle de la VM
+  ansible.builtin.ufw:
+    rule: allow
+    port: "{{ item }}"
+  loop: "{{ firewall_rules[inventory_hostname_short] | default([]) }}"

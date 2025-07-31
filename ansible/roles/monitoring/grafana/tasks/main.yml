@@ -1,0 +1,47 @@
+---
+- name: Installer les dépendances Grafana
+  ansible.builtin.apt:
+    name: [apt-transport-https, software-properties-common, wget]
+    state: present
+    update_cache: yes
+
+- name: Ajouter la clé GPG Grafana
+  ansible.builtin.shell: |
+    wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
+
+- name: Ajouter le dépôt Grafana
+  ansible.builtin.apt_repository:
+    repo: 'deb https://packages.grafana.com/oss/deb stable main'
+    state: present
+    filename: grafana
+
+- name: Installer Grafana
+  ansible.builtin.apt:
+    name: grafana
+    state: present
+
+- name: Démarrer Grafana
+  ansible.builtin.systemd:
+    name: grafana-server
+    enabled: yes
+    state: started
+
+- name: Créer les dossiers de provision des dashboards
+  ansible.builtin.file:
+    path: /etc/grafana/provisioning/dashboards
+    state: directory
+
+- name: Copier le fichier de configuration des dashboards
+  ansible.builtin.copy:
+    src: dashboard.yaml
+    dest: /etc/grafana/provisioning/dashboards/dashboard.yaml
+
+- name: Copier le fichier JSON du dashboard système
+  ansible.builtin.copy:
+    src: system-dashboard.json
+    dest: /etc/grafana/provisioning/dashboards/system-dashboard.json
+
+- name: Redémarrer Grafana pour charger le dashboard
+  ansible.builtin.systemd:
+    name: grafana-server
+    state: restarted

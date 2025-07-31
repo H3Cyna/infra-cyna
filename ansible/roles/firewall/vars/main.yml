@@ -1,0 +1,15 @@
+---
+firewall_rules:
+  common:
+    - 22        # SSH
+  gitlab:
+    - 80
+    - 443
+  prometheus:
+    - 9090
+  grafana:
+    - 3000
+  graylog:
+    - 9000
+  alertmanager:
+    - 9093

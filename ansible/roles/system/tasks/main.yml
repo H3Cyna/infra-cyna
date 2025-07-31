@@ -1,0 +1,37 @@
+---
+- name: Mettre à jour la VM
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Installer les paquets essentiels
+  ansible.builtin.apt:
+    name:
+      - vim
+      - curl
+      - git
+      - htop
+      - ufw
+    state: present
+
+- name: Créer un utilisateur DevOps
+  ansible.builtin.user:
+    name: devops
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+
+- name: Ajouter la clé SSH publique pour devops
+  ansible.builtin.authorized_key:
+    user: devops
+    state: present
+    key: "{{ lookup('file', 'files/id_rsa.pub') }}"
+
+- name: Activer le pare-feu UFW
+  ansible.builtin.ufw:
+    state: enabled
+
+- name: Autoriser SSH via UFW
+  ansible.builtin.ufw:
+    rule: allow
+    name: OpenSSH

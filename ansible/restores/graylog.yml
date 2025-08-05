@@ -1,0 +1,18 @@
+---
+- name: Restauration du service Graylog
+  hosts: vm_logs
+  become: true
+
+  tasks:
+    - name: Restaurer la VM Graylog via Terraform
+      command: terraform -chdir=terraform/graylog apply -auto-approve
+      register: terraform_result
+      changed_when: "'Apply complete!' in terraform_result.stdout"
+
+    - name: Attendre que la VM Graylog soit disponible
+      wait_for_connection:
+        timeout: 180
+
+    - name: Réappliquer la configuration Graylog
+      include_role:
+        name: graylog

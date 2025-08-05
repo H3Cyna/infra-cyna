@@ -1,0 +1,18 @@
+---
+- name: Restauration du service Prometheus
+  hosts: vm_monitoring
+  become: true
+
+  tasks:
+    - name: Restaurer la VM Prometheus via Terraform
+      command: terraform -chdir=terraform/prometheus apply -auto-approve
+      register: terraform_result
+      changed_when: "'Apply complete!' in terraform_result.stdout"
+
+    - name: Attendre que la VM Prometheus soit disponible
+      wait_for_connection:
+        timeout: 180
+
+    - name: Réappliquer la configuration Prometheus
+      include_role:
+        name: prometheus

@@ -1,0 +1,13 @@
+---
+- name: Reprovisionner un service critique
+  hosts: localhost
+  gather_facts: false
+
+  vars_prompt:
+    - name: service
+      prompt: "Quel service veux-tu restaurer ? (graylog, prometheus, gitlab)"
+      private: no
+
+  tasks:
+    - name: Charger dynamiquement le playbook correspondant
+      import_playbook: "restores/{{ service }}.yml"

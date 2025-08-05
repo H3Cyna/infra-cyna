@@ -1,0 +1,8 @@
+is_master = true
+node_id_file = /opt/graylog/node-id
+password_secret = {{ graylog_secret }}
+root_password_sha2 = {{ graylog_root_password_sha2 }}
+http_bind_address = 0.0.0.0:{{ graylog_http_port }}
+http_external_uri = http://{{ graylog_ip }}:{{ graylog_http_port }}/
+elasticsearch_hosts = {{ graylog_opensearch_uri }}
+mongodb_uri = {{ graylog_mongo_uri }}

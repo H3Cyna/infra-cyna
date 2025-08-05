@@ -1,0 +1,44 @@
+---
+- name: Créer le dossier Graylog
+  file:
+    path: /opt/graylog
+    state: directory
+    mode: '0755'
+
+- name: Récupérer la dernière URL de Graylog
+  shell: |
+    curl -s https://api.graylog.org/releases/graylog | grep linux-tgz | head -1 | cut -d '"' -f 4
+  register: graylog_url
+  changed_when: false
+
+- name: Télécharger Graylog
+  get_url:
+    url: "{{ graylog_url.stdout }}"
+    dest: /tmp/graylog.tgz
+
+- name: Extraire Graylog
+  unarchive:
+    src: /tmp/graylog.tgz
+    dest: /opt/graylog
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Copier le fichier de configuration server.conf
+  template:
+    src: server.conf.j2
+    dest: /opt/graylog/config/server.conf
+  notify: redémarrer graylog
+
+- name: Configurer la mémoire JVM
+  lineinfile:
+    path: /opt/graylog/bin/graylog.conf
+    regexp: '^-Xms'
+    line: "-Xms{{ graylog_heap_size }}"
+    insertafter: BOF
+  notify: redémarrer graylog
+
+- name: Lancer Graylog (si non déjà lancé)
+  shell: |
+    nohup /opt/graylog/bin/graylog-server > /var/log/graylog.log 2>&1 &
+  args:
+    creates: /tmp/graylog_running

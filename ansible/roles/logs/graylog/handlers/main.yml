@@ -1,0 +1,3 @@
+---
+- name: redémarrer graylog
+  shell: pkill -f graylog-server || true && sleep 2 && nohup /opt/graylog/bin/graylog-server > /var/log/graylog.log 2>&1 &

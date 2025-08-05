@@ -1,0 +1,37 @@
+---
+- name: Créer le dossier OpenSearch
+  file:
+    path: /opt/opensearch
+    state: directory
+    mode: '0755'
+
+- name: Récupérer la dernière version d’OpenSearch
+  shell: |
+    curl -s https://api.github.com/repos/opensearch-project/OpenSearch/releases/latest | grep tag_name | cut -d '"' -f 4
+  register: opensearch_version
+  changed_when: false
+
+- name: Télécharger OpenSearch {{ opensearch_version.stdout }}
+  get_url:
+    url: "https://github.com/opensearch-project/OpenSearch/releases/download/{{ opensearch_version.stdout }}/opensearch-{{ opensearch_version.stdout }}-linux-x64.tar.gz"
+    dest: /tmp/opensearch.tar.gz
+
+- name: Extraire OpenSearch
+  unarchive:
+    src: /tmp/opensearch.tar.gz
+    dest: /opt/opensearch
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Lancer OpenSearch (sans systemd, version simple)
+  shell: |
+    nohup /opt/opensearch/opensearch \
+    > /var/log/opensearch.log 2>&1 &
+  args:
+    creates: /tmp/opensearch_running
+
+- name: Modifier la mémoire JVM d'OpenSearch
+  lineinfile:
+    path: /opt/opensearch/config/jvm.options
+    regexp: '^-Xms'
+    line: "-Xms{{ opensearch_heap_size }}"

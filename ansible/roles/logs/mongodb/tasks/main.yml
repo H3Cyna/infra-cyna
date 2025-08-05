@@ -1,0 +1,30 @@
+---
+- name: Installer prérequis MongoDB
+  apt:
+    name:
+      - gnupg
+      - curl
+    state: present
+
+- name: Ajouter clé publique MongoDB
+  apt_key:
+    url: https://pgp.mongodb.com/server-6.0.asc
+    state: present
+
+- name: Ajouter dépôt MongoDB 6.0
+  apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse"
+    state: present
+    filename: "mongodb-org-6.0"
+
+- name: Installer MongoDB 6.x
+  apt:
+    name: mongodb-org
+    state: present
+    update_cache: yes
+
+- name: Activer et démarrer MongoDB
+  systemd:
+    name: mongod
+    enabled: yes
+    state: started

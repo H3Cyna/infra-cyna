@@ -1,0 +1,2 @@
+gitlab_external_url: "http://localhost"
+gitlab_root_password: "admin123"  # à overrider via prompt ou vault

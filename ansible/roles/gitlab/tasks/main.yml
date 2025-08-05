@@ -1,0 +1,31 @@
+---
+- name: Installer les dépendances GitLab
+  apt:
+    name:
+      - curl
+      - openssh-server
+      - ca-certificates
+      - tzdata
+      - perl
+    state: present
+    update_cache: yes
+
+- name: Ajouter le dépôt GitLab
+  shell: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | bash
+  args:
+    creates: /etc/apt/sources.list.d/gitlab_gitlab-ce.list
+
+- name: Copier le fichier de configuration gitlab.rb
+  template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  notify: reconfigure gitlab
+
+- name: Installer GitLab CE
+  apt:
+    name: gitlab-ce
+    state: present
+
+- name: Forcer la reconfiguration initiale (si non déclenchée)
+  command: gitlab-ctl reconfigure
+  when: not ansible_check_mode

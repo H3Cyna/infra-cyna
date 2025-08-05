@@ -1,0 +1,19 @@
+stages:
+
+  - syntax-check
+
+
+
+validate_playbooks:
+
+  stage: syntax-check
+
+  image: debian:bullseye
+
+  before_script:
+
+    - apt update && apt install -y ansible
+
+  script:
+
+    - ansible-playbook --syntax-check ansible/site.yml

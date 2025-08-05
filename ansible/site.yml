@@ -1,6 +1,5 @@
 
 ---
-```yaml
 # ansible/site.yml
 - name: Déploiement complet des serveurs Cyna
   hosts: all

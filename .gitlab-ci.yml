@@ -9,6 +9,9 @@ validate_playbooks:
   stage: syntax-check
 
   image: debian:bullseye
+  
+  tags:
+    - ansible
 
   before_script:
 

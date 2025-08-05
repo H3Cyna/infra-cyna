@@ -40,3 +40,46 @@
   become: true
   roles:
     - node_exporter
+
+- name: Déploiement de la stack Graylog (MongoDB, OpenSearch, Graylog)
+  hosts: vm_logs
+  become: true
+
+  vars_prompt:
+    - name: "password"
+      prompt: "Mot de passe pour l'utilisateur 'admin' Graylog"
+      private: yes
+      default: graylog
+
+    - name: "gl_ip"
+      prompt: "Adresse IP du serveur Graylog (laisser vide pour 'localhost')"
+      private: no
+      default: "localhost"
+
+    - name: "os_memory"
+      prompt: "Mémoire pour OpenSearch (en MB, ex: 2048)"
+      private: no
+      default: "2048"
+
+    - name: "gl_memory"
+      prompt: "Mémoire pour Graylog (en MB, ex: 2048)"
+      private: no
+      default: "2048"
+
+  vars:
+    graylog_password: "{{ password }}"
+    graylog_ip: "{{ gl_ip }}"
+    graylog_http_port: 9000
+    graylog_heap_size: "{{ gl_memory }}m"
+    opensearch_heap_size: "{{ os_memory }}m"
+    graylog_mongo_uri: "mongodb://localhost/graylog"
+    graylog_opensearch_uri: "http://localhost:9200"
+    graylog_root_password_sha2: "{{ graylog_password | password_hash('sha256') }}"
+    graylog_secret: "{{ lookup('password', '/dev/null', length=96, chars='ascii_letters') }}"
+
+  roles:
+    - mongodb
+    - opensearch
+    - graylog
+
+
